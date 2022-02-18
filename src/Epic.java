@@ -17,33 +17,55 @@ public class Epic extends Task {
         subTasks.put(subTask.getId(), subTask );
     }
 
+    public void deleteSubTaskById(int subTaskId) {
+        subTasks.remove(subTaskId);
+    }
 
+// метод автоматического изменения статуса эпика
     public void updateStatus() {
-        switch(getStatus()) {
-            case NEW:
-                for (SubTask subTask : subTasks.values()) {
-                    if (subTask.getStatus() == TaskStatus.IN_PROGRESS) {
+        int countOfNewSubTasks = 0; //количество задач в эпике со статусом NEW
+        int countOfInProgressSubTasks = 0; //количество задач в эпике со статусом IN_PROGRESS
+        int countOfDoneSubTasks = 0; //количество задач в эпике со статусом DONE
+
+        if (subTasks.keySet().size() > 0) { //если подзадач нет, то статус эпика всегда NEW
+
+            for (SubTask subTask : subTasks.values()) {
+                if (subTask.getStatus() == TaskStatus.NEW) {
+                    countOfNewSubTasks++;
+                } else if (subTask.getStatus() == TaskStatus.IN_PROGRESS) {
+                    countOfInProgressSubTasks++;
+                } else {
+                    countOfDoneSubTasks++;
+                }
+            }
+
+
+            switch (getStatus()) {
+                case NEW:
+                    if (countOfInProgressSubTasks > 0) {
                         status = TaskStatus.IN_PROGRESS;
+                    } else if (countOfDoneSubTasks == subTasks.keySet().size()) {
+                        status = TaskStatus.DONE;
                     }
-                }
-                break;
-            case IN_PROGRESS:
-                int countOfDoneSubtasks = 0;
-
-                for (SubTask subTask : subTasks.values()) {
-                    if (subTask.getStatus() == TaskStatus.DONE) {
-                        countOfDoneSubtasks++;
+                        break;
+                case IN_PROGRESS:
+                    if (countOfDoneSubTasks == subTasks.keySet().size()) {
+                        status = TaskStatus.DONE;
+                    } else if (countOfNewSubTasks == subTasks.keySet().size()) {
+                        status = TaskStatus.NEW;
                     }
-                }
-
-                if (countOfDoneSubtasks == subTasks.keySet().size()) {
-                    status = TaskStatus.DONE;
-                }
-                break;
-            case DONE:
-                break;
+                    break;
+                case DONE:
+                    if (countOfInProgressSubTasks > 0) {
+                        status = TaskStatus.IN_PROGRESS;
+                    } else if (countOfNewSubTasks == subTasks.keySet().size()) {
+                        status = TaskStatus.NEW;
+                    }
+                    break;
+            }
+        } else {
+            status = TaskStatus.NEW;
         }
-
     }
 
 

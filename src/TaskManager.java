@@ -99,6 +99,7 @@ public class TaskManager {
         Epic epic = getEpicById(subTask.getEpicId());
 
         subTasks.remove(subTaskId);
+        epic.deleteSubTaskById(subTaskId);
         epic.updateStatus();
     }
 

@@ -1,3 +1,6 @@
+package model;
+
+import java.util.Objects;
 
 /*Класс для реализации объектов типа задача*/
 public class Task {
@@ -29,4 +32,17 @@ public class Task {
         return status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Task)) return false;
+        Task task = (Task) o;
+        return getId() == task.getId() && getName().equals(task.getName()) && Objects.equals(getDescription(),
+                task.getDescription()) && getStatus() == task.getStatus();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

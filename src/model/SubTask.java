@@ -1,3 +1,4 @@
+package model;
 
 /*Класс для реализации объектов типа подзадача*/
 public class SubTask extends Task {

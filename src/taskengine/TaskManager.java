@@ -51,7 +51,6 @@ import java.util.List;
 
      ArrayList<SubTask> subTasksByEpic(Epic epic);
 
-     void updateHistory(Task task);
-
      List<Task> history();
+
 }

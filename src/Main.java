@@ -2,32 +2,49 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 import model.TaskStatus;
+import taskengine.InMemoryTaskManager;
+import taskengine.Managers;
 import taskengine.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager inMemoryTaskManager = Managers.getDefault();
 
         Task task1 = new Task("Первая задача", "Описание первой задачи",
-                taskManager.getTaskId(), TaskStatus.NEW);
+                inMemoryTaskManager.getTaskId(), TaskStatus.NEW);
 
         Task task2 = new Task("Вторая задача", "Описание второй задачи",
-                taskManager.getTaskId(), TaskStatus.NEW);
+                inMemoryTaskManager.getTaskId(), TaskStatus.NEW);
 
         Epic epic1 = new Epic ("Первый эпик", "Описание первого эпика",
-                taskManager.getTaskId(), TaskStatus.NEW);
+                inMemoryTaskManager.getTaskId(), TaskStatus.NEW);
 
         SubTask subTask1 = new SubTask("Первая подзадача", "Описание первой подзадачи",
-                taskManager.getTaskId(), TaskStatus.IN_PROGRESS, epic1.getId());
+                inMemoryTaskManager.getTaskId(), TaskStatus.IN_PROGRESS, epic1.getId());
 
         SubTask subTask2 = new SubTask("Вторая подзадача", "Описание второй подзадачи",
-                taskManager.getTaskId(), TaskStatus.NEW, epic1.getId());
+                inMemoryTaskManager.getTaskId(), TaskStatus.NEW, epic1.getId());
 
 
-        taskManager.createTask(task1);
-        taskManager.createEpic(epic1);
-        taskManager.createSubTask(subTask1);
-        taskManager.createSubTask(subTask2);
+
+        inMemoryTaskManager.createTask(task1);
+        inMemoryTaskManager.createEpic(epic1);
+        inMemoryTaskManager.createSubTask(subTask1);
+        inMemoryTaskManager.createSubTask(subTask2);
+
+        inMemoryTaskManager.getTaskById(1);
+        inMemoryTaskManager.getEpicById(3);
+        inMemoryTaskManager.getEpicById(3);
+        inMemoryTaskManager.getTaskById(1);
+        inMemoryTaskManager.getTaskById(1);
+        inMemoryTaskManager.getSubTaskById(4);
+        inMemoryTaskManager.getSubTaskById(5);
+        inMemoryTaskManager.getTaskById(1);
+        inMemoryTaskManager.getTaskById(1);
+        inMemoryTaskManager.getSubTaskById(4);
+        inMemoryTaskManager.getEpicById(3);
+
+        System.out.println(inMemoryTaskManager.history());
 
     }
 }

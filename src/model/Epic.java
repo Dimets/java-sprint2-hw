@@ -2,10 +2,11 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /*Класс для реализации объектов типа эпик*/
 public class Epic extends Task {
-    private HashMap<Integer, SubTask> subTasks = new HashMap<>();
+    private Map<Integer, SubTask> subTasks = new HashMap<>();
 
     public Epic(String name, String description, int id, TaskStatus epicStatus) {
         super(name, description, id, epicStatus);

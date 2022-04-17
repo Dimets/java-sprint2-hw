@@ -8,6 +8,12 @@ import java.util.Map;
 public class Epic extends Task {
     private Map<Integer, SubTask> subTasks = new HashMap<>();
 
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
+    private TaskType taskType = TaskType.EPIC;
+
     public Epic(String name, String description, int id, TaskStatus epicStatus) {
         super(name, description, id, epicStatus);
     }
@@ -71,5 +77,12 @@ public class Epic extends Task {
         }
     }
 
+    public static Epic fromString(String value) {
+        String[] taskData = value.split(",");
+
+        return new Epic(taskData[2], taskData[4], Integer.parseInt(taskData[0]),
+                TaskStatus.valueOf(taskData[3]));
+
+    }
 
 }

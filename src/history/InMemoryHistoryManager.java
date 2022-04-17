@@ -75,6 +75,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         historyMap.put(id, taskTaskLinkedList.linkLast(task));
 
+
     }
 
     @Override
@@ -89,4 +90,20 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         return taskTaskLinkedList.getTasks();
     }
+
+    public static String toString(HistoryManager historyManager) {
+       StringBuilder historyManagerString =  new StringBuilder();
+       int task;
+
+       for (int i = 0; i < historyManager.getHistory().size(); i++) {
+           if (i != (historyManager.getHistory().size() - 1)) {
+               historyManagerString.append(historyManager.getHistory().get(i).getId() + ",");
+           } else {
+               historyManagerString.append(historyManager.getHistory().get(i).getId());
+           }
+       }
+
+       return historyManagerString.toString();
+    }
+
 }

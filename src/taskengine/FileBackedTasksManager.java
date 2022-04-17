@@ -60,7 +60,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return historyManager;
     }
 
-    public static FileBackedTasksManager loadFromFile(File file) {
+    public static TaskManager loadFromFile(File file) {
         TaskManager fileBackedTasksManager = Managers.getFileManager();
 
         try (FileReader reader = new FileReader(file,StandardCharsets.UTF_8)) {
@@ -96,7 +96,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerReadException("Error to read file");
         }
-       return (FileBackedTasksManager) fileBackedTasksManager;
+       return fileBackedTasksManager;
     }
 
     public static List<Integer> fromString(String value) {

@@ -8,12 +8,11 @@ import java.util.Objects;
 public class Task implements Comparable<Task> {
     private String name;
     private String description;
-    private int id;
+    private final int id;
     protected TaskStatus status;
     private LocalDateTime startTime;
     private Duration duration;
-
-    private TaskType taskType = TaskType.TASK;
+    private final TaskType taskType = TaskType.TASK;
 
     public Task(String name, String description, int id, TaskStatus status) {
         this.name = name;

@@ -12,7 +12,7 @@ public class Epic extends Task {
     private LocalDateTime startTime;
     private Duration duration;
     private LocalDateTime endTime;
-    private TaskType taskType = TaskType.EPIC;
+    private final TaskType taskType = TaskType.EPIC;
 
     public Epic(String name, String description, int id, TaskStatus epicStatus) {
         super(name, description, id, epicStatus, null, null);

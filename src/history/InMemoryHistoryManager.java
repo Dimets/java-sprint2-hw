@@ -55,8 +55,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                clearNode(node);
            }
         }
-
-
         private void clearNode(Node<T> node) {
             node.setPrev(null);
             node.setNext(null);
@@ -71,6 +69,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         int id = task.getId();
 
         if (historyMap.containsKey(id)) {
+            taskTaskLinkedList.removeNode(historyMap.get(id));
             historyMap.remove(id);
         }
         historyMap.put(id, taskTaskLinkedList.linkLast(task));

@@ -26,10 +26,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.backupFile = backupFile;
     }
 
+    public File getBackupFile() {
+        return backupFile;
+    }
+
+    @Override
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
     public void save() {
 
         try (FileWriter writer = new FileWriter(backupFile, StandardCharsets.UTF_8)) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,epic,starttime,duration\n");
             for (Task task : super.getTasks().values()) {
                 writer.write( task.toString() +  "\n");
             }
@@ -51,21 +60,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public File getBackupFile() {
-        return backupFile;
-    }
-
-    @Override
-    public HistoryManager getHistoryManager() {
-        return historyManager;
-    }
-
     public static TaskManager loadFromFile(File file) {
         TaskManager fileBackedTasksManager = Managers.getFileManager();
 
         try (FileReader reader = new FileReader(file,StandardCharsets.UTF_8)) {
             String fileData = Files.readString(Path.of(file.getPath()), StandardCharsets.UTF_8);
             String[] fileLines = fileData.split("\n");
+
+            if (fileData.length() == 0 || fileLines.length < 2) {
+                System.out.println("Файл для загрузки данных пустой");
+                throw new EmptyFileException();
+            }
+
             List<Integer> idInHistory = fromString(fileLines[fileLines.length-1]);
 
             for (int i = 1; i < fileLines.length; i++) {

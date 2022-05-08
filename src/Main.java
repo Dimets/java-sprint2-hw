@@ -16,12 +16,12 @@ public class Main {
     public static void main(String[] args) {
 
 
-        TaskManager taskManager = Managers.getDefault();
+        //TaskManager taskManager = Managers.getDefault();
         //TaskManager taskManager = Managers.getFileManager();
-        //TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
+        TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
 
 
-        /*
+
 
         Task task1 = new Task("Первая задача", "Описание первой задачи",
                 taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now().minusDays(2),Duration.ofDays(10));
@@ -74,14 +74,14 @@ public class Main {
         //taskManager.getTaskById(task2.getId());
         //taskManager.getSubTaskById(subTask3.getId());
         //taskManager.getEpicById(epic2.getId());
-*/
+
 
         Task task = new Task("Первая задача", "Описание первой задачи",
-                taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8));
+                taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now().plusDays(15), Duration.ofHours(8));
         taskManager.createTask(task);
 
         Task updatedTask = new Task("Первая задача", "Описание первой задачи",
-                task.getId(), TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofHours(8));
+                task.getId(), TaskStatus.IN_PROGRESS, LocalDateTime.now().plusDays(20), Duration.ofHours(8));
 
         taskManager.updateTask(updatedTask);
 

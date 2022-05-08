@@ -131,8 +131,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
-
-        if (tasks.get(task.getId()).getEndTime().equals(task.getEndTime())) {
+        if ((tasks.get(task.getId()).getEndTime() == null && task.getEndTime() == null) ||
+                tasks.get(task.getId()).getEndTime().equals(task.getEndTime())) {
             prioritizedTasks.remove(tasks.get(task.getId()));
             tasks.put(task.getId(), task);
             prioritizedTasks.add(task);
@@ -236,7 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
                     return true;
                 } else if (task.getStartTime().isAfter(floorTask.getEndTime())) {
                     return true;
-                }
+                } else {return false;}
             }
 
             if (floorTask.getEndTime() != null && higherTask.getStartTime() != null) {

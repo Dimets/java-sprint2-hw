@@ -72,8 +72,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 throw new EmptyFileException();
             }
 
-            List<Integer> idInHistory = fromString(fileLines[fileLines.length-1]);
-
             for (int i = 1; i < fileLines.length; i++) {
                 if (i < fileLines.length - 2) {
                     if (fileLines[i].split(",")[1].equals("TASK")) {
@@ -89,13 +87,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
 
-            for (int id : idInHistory) {
-                if (fileBackedTasksManager.getTasks().containsKey(id)) {
-                    fileBackedTasksManager.getTaskById(id);
-                } else if (fileBackedTasksManager.getEpics().containsKey(id)) {
-                    fileBackedTasksManager.getEpicById(id);
-                } else {
-                    fileBackedTasksManager.getSubTaskById(id);
+            if (fileLines[fileLines.length-2].equals("") && fileLines[fileLines.length-1].length() > 0) {
+                List<Integer> idInHistory = fromString(fileLines[fileLines.length - 1]);
+
+                for (int id : idInHistory) {
+                    if (fileBackedTasksManager.getTasks().containsKey(id)) {
+                        fileBackedTasksManager.getTaskById(id);
+                    } else if (fileBackedTasksManager.getEpics().containsKey(id)) {
+                        fileBackedTasksManager.getEpicById(id);
+                    } else {
+                        fileBackedTasksManager.getSubTaskById(id);
+                    }
                 }
             }
 

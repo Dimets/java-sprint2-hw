@@ -60,16 +60,8 @@ public class Task implements Comparable<Task> {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
     public Duration getDuration() {
         return duration;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
     }
 
     public LocalDateTime getEndTime() {

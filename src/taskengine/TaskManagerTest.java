@@ -2,6 +2,7 @@ package taskengine;
 
 import model.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -12,9 +13,6 @@ import java.util.*;
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
 
-    TaskManagerTest(T taskManager) {
-        this.taskManager = taskManager;
-    }
 
     @Test
     void shouldGetTaskId() {
@@ -263,13 +261,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldUpdateTask() {
+        final LocalDateTime startTime = LocalDateTime.now();
+
         final Task task = new Task("Первая задача", "Описание первой задачи",
-                taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8));
+                taskManager.getTaskId(), TaskStatus.NEW, startTime, Duration.ofHours(8));
         taskManager.createTask(task);
 
         final Task updatedTask = new Task("Первая задача", "Описание первой задачи",
-                task.getId(), TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofHours(8));
-
+                task.getId(), TaskStatus.IN_PROGRESS, startTime, Duration.ofHours(8));
         taskManager.updateTask(updatedTask);
 
         Assertions.assertEquals(updatedTask, taskManager.getTaskById(updatedTask.getId()), "Задача не обновилась");

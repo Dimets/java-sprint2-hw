@@ -1,9 +1,11 @@
 package taskengine;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    public InMemoryTaskManagerTest() {
-        super(new InMemoryTaskManager(Managers.getDefaultHistory()));
+    @BeforeEach
+    public void setUp() {
+        taskManager = (InMemoryTaskManager) Managers.getDefault();
     }
 }

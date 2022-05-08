@@ -1,7 +1,9 @@
 package model;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import taskengine.InMemoryTaskManager;
 import taskengine.Managers;
 import taskengine.TaskManager;
 
@@ -10,7 +12,13 @@ import java.time.LocalDateTime;
 
 class EpicTest {
 
-    private static TaskManager taskManager = Managers.getDefault();
+    //private static TaskManager taskManager = Managers.getDefault();
+    private static TaskManager taskManager;
+
+    @BeforeEach
+    public void setUp() {
+        taskManager = (InMemoryTaskManager) Managers.getDefault();
+    }
 
     @Test
     public void shouldNotChangeEpicStatusWithoutSubtasks() {
@@ -27,7 +35,7 @@ class EpicTest {
         SubTask subTask1 = new SubTask("Первая подзадача", "Описание первой подзадачи",
                 taskManager.getTaskId(), TaskStatus.NEW, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
         SubTask subTask2 = new SubTask("Вторая подзадача", "Описание второй подзадачи",
-                taskManager.getTaskId(), TaskStatus.NEW, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
+                taskManager.getTaskId(), TaskStatus.NEW, epic.getId(), LocalDateTime.now().plusDays(3), Duration.ofHours(8));
 
         taskManager.createEpic(epic);
         taskManager.createSubTask(subTask1);
@@ -43,7 +51,7 @@ class EpicTest {
         SubTask subTask1 = new SubTask("Первая подзадача", "Описание первой подзадачи",
                 taskManager.getTaskId(), TaskStatus.DONE, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
         SubTask subTask2 = new SubTask("Вторая подзадача", "Описание второй подзадачи",
-                taskManager.getTaskId(), TaskStatus.DONE, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
+                taskManager.getTaskId(), TaskStatus.DONE, epic.getId(), LocalDateTime.now().plusDays(3), Duration.ofHours(8));
 
         taskManager.createEpic(epic);
         taskManager.createSubTask(subTask1);
@@ -59,7 +67,7 @@ class EpicTest {
         SubTask subTask1 = new SubTask("Первая подзадача", "Описание первой подзадачи",
                 taskManager.getTaskId(), TaskStatus.NEW, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
         SubTask subTask2 = new SubTask("Вторая подзадача", "Описание второй подзадачи",
-                taskManager.getTaskId(), TaskStatus.DONE, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
+                taskManager.getTaskId(), TaskStatus.DONE, epic.getId(), LocalDateTime.now().plusDays(3), Duration.ofHours(8));
 
         taskManager.createEpic(epic);
         taskManager.createSubTask(subTask1);

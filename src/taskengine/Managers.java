@@ -18,6 +18,11 @@ public class Managers {
         return new FileBackedTasksManager(getDefaultHistory(), file);
     }
 
+    public static TaskManager getFileManager(String pathname) {
+        File file = new File(pathname);
+        return new FileBackedTasksManager(getDefaultHistory(), file);
+    }
+
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }

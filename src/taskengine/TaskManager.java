@@ -48,8 +48,10 @@ public interface TaskManager {
 
     void deleteSubTaskById(int subTaskId);
 
-    List<SubTask> subTasksByEpic(Epic epic);
-
     List<Task> history();
+
+    List<Task> getPrioritizedTasks();
+
+    boolean checkTaskPriority(Task task);
 
 }

@@ -1,7 +1,8 @@
-package taskengine;
+package test;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import taskengine.InMemoryTaskManager;
+import taskengine.Managers;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @BeforeEach

@@ -1,5 +1,8 @@
-package model;
+package test;
 
+import model.Epic;
+import model.SubTask;
+import model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

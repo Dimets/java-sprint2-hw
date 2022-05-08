@@ -1,10 +1,12 @@
-package taskengine;
+package test;
 
 import model.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import taskengine.EpicForSubTaskNotExistException;
+import taskengine.ManualChangeEpicStatusException;
+import taskengine.TaskManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -459,10 +461,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 taskManager.getTaskId(), TaskStatus.NEW);
         taskManager.createTask(task3);
 
-        ArrayList<Task> referenceTasksList = new ArrayList<>(Arrays.asList(task2, task1, task3));
-        ArrayList<Task> prioritizedTasksList = new ArrayList<>(taskManager.getPrioritizedTasks());
+        Set<Task> referenceTaskSet = new TreeSet<>();
+        referenceTaskSet.add(task1);
+        referenceTaskSet.add(task2);
+        referenceTaskSet.add(task3);
 
-        Assertions.assertEquals(referenceTasksList, prioritizedTasksList, "Список задач по приоритеам некорректный");
+        Set<Task> prioritizedTasksSet = taskManager.getPrioritizedTasks();
+
+
+        Assertions.assertIterableEquals(referenceTaskSet,prioritizedTasksSet, "Список задач по приоритеам некорректный");
 
         final Epic epic1 = new Epic ("Первый эпик", "Описание первого эпика",
                 taskManager.getTaskId(), TaskStatus.NEW);
@@ -476,12 +483,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 taskManager.getTaskId(), TaskStatus.DONE, epic1.getId(), LocalDateTime.now().minusDays(4), Duration.ofHours(8));
         taskManager.createSubTask(subTask2);
 
-        referenceTasksList = new ArrayList<>(Arrays.asList(subTask1,task2, task1, task3));
-        prioritizedTasksList = new ArrayList<>(taskManager.getPrioritizedTasks());
+        referenceTaskSet.add(subTask1);
 
-        Assertions.assertEquals(referenceTasksList, prioritizedTasksList, "Список задач по приоритеам некорректный");
+        prioritizedTasksSet = taskManager.getPrioritizedTasks();
 
-
+        Assertions.assertIterableEquals(referenceTaskSet, prioritizedTasksSet, "Список задач по приоритеам некорректный");
     }
 
 }

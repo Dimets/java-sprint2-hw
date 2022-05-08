@@ -6,6 +6,7 @@ import model.Task;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*Класс для управления задачами*/
 public interface TaskManager {
@@ -50,7 +51,7 @@ public interface TaskManager {
 
     List<Task> history();
 
-    List<Task> getPrioritizedTasks();
+    Set<Task> getPrioritizedTasks();
 
     boolean checkTaskPriority(Task task);
 

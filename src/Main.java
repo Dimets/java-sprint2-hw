@@ -4,25 +4,30 @@ import model.SubTask;
 import model.Task;
 import model.TaskStatus;
 import taskengine.FileBackedTasksManager;
+import taskengine.HttpTaskServer;
 import taskengine.Managers;
 import taskengine.TaskManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
         //TaskManager taskManager = Managers.getDefault();
         //TaskManager taskManager = Managers.getFileManager();
-        TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
+        //TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
+
+        HttpTaskServer httpTaskServer = new HttpTaskServer(FileBackedTasksManager.loadFromFile(
+               new File("DbTaskManager.csv")));
 
 
 
-
+/*
         Task task1 = new Task("Первая задача", "Описание первой задачи",
                 taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now().minusDays(2),Duration.ofDays(10));
 
@@ -97,6 +102,6 @@ public class Main {
 
         System.out.println("prior tasks:");
         System.out.println(taskManager.getPrioritizedTasks());
-
+*/
     }
 }

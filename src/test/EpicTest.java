@@ -1,5 +1,6 @@
 package test;
 
+import com.google.gson.Gson;
 import model.Epic;
 import model.SubTask;
 import model.TaskStatus;
@@ -96,12 +97,28 @@ class EpicTest {
     public void shouldChangeEpicStatusToInProgressFromDoneWithSubtaskInStatusInProgress() {
         Epic epic = new Epic("Первый эпик", "Описание первого эпика",
                 taskManager.getTaskId(), TaskStatus.DONE);
-        SubTask subTask1 = new SubTask("Первая подзадача", "Описание первой подзадачи",
+        SubTask subTask = new SubTask("Первая подзадача", "Описание первой подзадачи",
                 taskManager.getTaskId(), TaskStatus.IN_PROGRESS, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
 
         taskManager.createEpic(epic);
-        taskManager.createSubTask(subTask1);
+        taskManager.createSubTask(subTask);
 
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(),"Статус эпика не изменился");
+    }
+
+    @Test
+    void shouldSerializeEpic() {
+        Epic epic = new Epic ("Первый эпик", "Описание первого эпика",
+                taskManager.getTaskId(), TaskStatus.NEW);
+        SubTask subTask = new SubTask("Первая подзадача", "Описание первой подзадачи",
+                taskManager.getTaskId(), TaskStatus.IN_PROGRESS, epic.getId(), LocalDateTime.now(), Duration.ofHours(8));
+
+        taskManager.createEpic(epic);
+        taskManager.createSubTask(subTask);
+
+        Gson gson = new Gson();
+        String serializedEpic = gson.toJson(epic);
+
+        System.out.println(serializedEpic);
     }
 }

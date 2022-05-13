@@ -56,13 +56,13 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
             Assertions.assertEquals("id,type,name,status,description,epic,starttime,duration", fileLines[0],
                     "Строка с заголовками записана  в файл некорректно");
-            Assertions.assertEquals("1,TASK,Первая задача,NEW,Описание первой задачи," +
+            Assertions.assertEquals("1,TASK,Первая задача,NEW,Описание первой задачи,," +
                     defaultStartTime.minusDays(2) + ",PT240H,", fileLines[1], "Задача записана в файл некорректно");
-            Assertions.assertEquals("2,EPIC,Первый эпик,IN_PROGRESS,Описание первого эпика," +
+            Assertions.assertEquals("2,EPIC,Первый эпик,IN_PROGRESS,Описание первого эпика,," +
                     subTask2.getStartTime() + ",PT24H,", fileLines[2],
                     "Эпик записан в файл некорректно");
             Assertions.assertEquals("4,SUBTASK,Вторая подзадача,IN_PROGRESS,Описание второй подзадачи,2," +
-                     subTask2.getStartTime() + ",PT24H", fileLines[3]);
+                     subTask2.getStartTime() + ",PT24H,", fileLines[3]);
             Assertions.assertEquals("", fileLines[4]);
             Assertions.assertEquals("2,1,4", fileLines[5]);
 

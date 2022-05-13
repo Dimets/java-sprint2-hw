@@ -9,18 +9,20 @@ import java.util.Map;
 /*Класс для реализации объектов типа эпик*/
 public class Epic extends Task {
     private Map<Integer, SubTask> subTasks = new HashMap<>();
-    private LocalDateTime startTime;
-    private Duration duration;
+    //private LocalDateTime startTime;
+    //private Duration duration;
     private LocalDateTime endTime;
-    private final TaskType taskType = TaskType.EPIC;
 
     public Epic(String name, String description, int id, TaskStatus epicStatus) {
-        super(name, description, id, epicStatus, null, null);
+        super(name, description, id, epicStatus);
+        this.taskType = TaskType.EPIC;
+        this.endTime = null;
     }
 
     public TaskType getTaskType() {
         return taskType;
     }
+
     public ArrayList<SubTask> getSubTasks() {
         return new ArrayList<>(subTasks.values());
     }

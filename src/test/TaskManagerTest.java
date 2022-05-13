@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import taskengine.EpicForSubTaskNotExistException;
-import taskengine.ManualChangeEpicStatusException;
 import taskengine.TaskManager;
 
 import java.time.Duration;

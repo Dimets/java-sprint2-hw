@@ -4,6 +4,7 @@ import history.HistoryManager;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import test.ManualChangeEpicStatusException;
 
 import java.util.*;
 
@@ -46,11 +47,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTasks() {
+        for (int id : tasks.keySet()) {
+            historyManager.remove(id);
+        }
         tasks.clear();
     }
 
     @Override
     public void deleteAllEpics() {
+        for (int id : epics.keySet()) {
+            historyManager.remove(id);
+        }
         epics.clear();
     }
 

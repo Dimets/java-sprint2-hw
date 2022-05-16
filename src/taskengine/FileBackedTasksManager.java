@@ -17,17 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private File backupFile;
+    private String backupFile;
     private HistoryManager historyManager;
 
-    public FileBackedTasksManager(HistoryManager historyManager, File backupFile) {
+    public FileBackedTasksManager(HistoryManager historyManager, String backupFile) {
         super(historyManager);
         this.historyManager = historyManager;
         this.backupFile = backupFile;
     }
 
     public File getBackupFile() {
-        return backupFile;
+        return new File(backupFile);
     }
 
     @Override

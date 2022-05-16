@@ -3,28 +3,42 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 import model.TaskStatus;
-import taskengine.FileBackedTasksManager;
-import taskengine.HttpTaskServer;
-import taskengine.Managers;
-import taskengine.TaskManager;
+import taskengine.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
 
         //TaskManager taskManager = Managers.getDefault();
         //TaskManager taskManager = Managers.getFileManager();
         //TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
 
-        HttpTaskServer httpTaskServer = new HttpTaskServer(FileBackedTasksManager.loadFromFile(
-               new File("DbTaskManager.csv")));
+        //HttpTaskServer httpTaskServer = new HttpTaskServer(FileBackedTasksManager.loadFromFile(
+          //     new File("DbTaskManager.csv")));
 
+        KVServer kvServer = new KVServer();
+        kvServer.start();
+
+        KVTaskClient kvTaskClient = new KVTaskClient("http://localhost:8078");
+
+        kvTaskClient.put("1", "value 1");
+
+        kvTaskClient.put("2", "value 2");
+
+        System.out.println(kvTaskClient.load("1"));
+
+        kvTaskClient.put("1", "updated value 1");
+
+        System.out.println(kvTaskClient.load("1"));
+
+        System.out.println(kvTaskClient.load("2"));
 
 
 /*

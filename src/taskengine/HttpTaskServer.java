@@ -17,11 +17,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class HttpTaskServer {
-    private HttpServer httpServer;
+    private final HttpServer httpServer;
     private static TaskManager fileBackedTaskManager;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
@@ -84,7 +84,7 @@ public class HttpTaskServer {
                     break;
                 default:
                     response = "Unsupported method";
-                    responseCode = 400;
+                    responseCode = 405;
             }
             httpExchange.sendResponseHeaders(responseCode, 0);
             try (OutputStream os = httpExchange.getResponseBody()) {
@@ -142,7 +142,7 @@ public class HttpTaskServer {
                     break;
                 default:
                     response = "Unsupported method";
-                    responseCode = 400;
+                    responseCode = 405;
             }
             httpExchange.sendResponseHeaders(responseCode, 0);
             try (OutputStream os = httpExchange.getResponseBody()) {
@@ -201,7 +201,7 @@ public class HttpTaskServer {
                     break;
                 default:
                     response = "Unsupported method";
-                    responseCode = 400;
+                    responseCode = 405;
             }
             httpExchange.sendResponseHeaders(responseCode, 0);
             try (OutputStream os = httpExchange.getResponseBody()) {

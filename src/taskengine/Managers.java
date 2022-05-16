@@ -14,13 +14,12 @@ public class Managers {
     }
 
     public static TaskManager getFileManager() {
-        File file =  new File("DbTaskManager.csv");
+        String file =  "DbTaskManager.csv";
         return new FileBackedTasksManager(getDefaultHistory(), file);
     }
 
     public static TaskManager getFileManager(String pathname) {
-        File file = new File(pathname);
-        return new FileBackedTasksManager(getDefaultHistory(), file);
+        return new FileBackedTasksManager(getDefaultHistory(), pathname);
     }
 
     public static HistoryManager getDefaultHistory() {

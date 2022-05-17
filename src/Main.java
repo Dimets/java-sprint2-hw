@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException {
-
+    public static void main(String[] args) throws IOException {
+        KVServer kvServer = new KVServer();
+        kvServer.start();
 
         //TaskManager taskManager = Managers.getDefault();
         //TaskManager taskManager = Managers.getFileManager();
@@ -23,25 +24,10 @@ public class Main {
         //HttpTaskServer httpTaskServer = new HttpTaskServer(FileBackedTasksManager.loadFromFile(
           //     new File("DbTaskManager.csv")));
 
-        KVServer kvServer = new KVServer();
-        kvServer.start();
+        TaskManager taskManager = Managers.getHttpManager();
 
-        KVTaskClient kvTaskClient = new KVTaskClient("http://localhost:8078");
+        HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
 
-        kvTaskClient.put("1", "value 1");
-
-        kvTaskClient.put("2", "value 2");
-
-        System.out.println(kvTaskClient.load("1"));
-
-        kvTaskClient.put("1", "updated value 1");
-
-        System.out.println(kvTaskClient.load("1"));
-
-        System.out.println(kvTaskClient.load("2"));
-
-
-/*
         Task task1 = new Task("Первая задача", "Описание первой задачи",
                 taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now().minusDays(2),Duration.ofDays(10));
 
@@ -116,6 +102,6 @@ public class Main {
 
         System.out.println("prior tasks:");
         System.out.println(taskManager.getPrioritizedTasks());
-*/
+
     }
 }

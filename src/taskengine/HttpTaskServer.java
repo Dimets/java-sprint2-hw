@@ -18,14 +18,14 @@ import java.nio.charset.StandardCharsets;
 
 public class HttpTaskServer {
     private final HttpServer httpServer;
-    private static TaskManager fileBackedTaskManager;
+    private static TaskManager taskManager;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     private static final Gson gson = new Gson();
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
-        this.fileBackedTaskManager = taskManager;
+        this.taskManager = taskManager;
 
         httpServer.createContext("/tasks/task", new TaskHandler());
         httpServer.createContext("/tasks/subtask", new SubTaskHandler());
@@ -48,16 +48,16 @@ public class HttpTaskServer {
                 case "GET":
                     if (requestURI.getQuery()  == null ) {
                         //GET /tasks/task/
-                        response = gson.toJson(fileBackedTaskManager.getTasks());
+                        response = gson.toJson(taskManager.getTasks());
                         responseCode = 200;
                     } else if (requestURI.getQuery().startsWith("id=")) {
                         //GET /tasks/task/?id=
                         int id = Integer.parseInt(requestURI.getQuery().substring(3));
-                        if (fileBackedTaskManager.getTaskById(id) == null) {
+                        if (taskManager.getTaskById(id) == null) {
                             responseCode = 404;
                         } else {
                             responseCode = 200;
-                            response = gson.toJson(fileBackedTaskManager.getTaskById(id));
+                            response = gson.toJson(taskManager.getTaskById(id));
                         }
                     } else {
                         responseCode = 400;
@@ -67,16 +67,16 @@ public class HttpTaskServer {
                     InputStream inputStream = httpExchange.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
                     Task task = gson.fromJson(body, Task.class);
-                    fileBackedTaskManager.createTask(task);
+                    taskManager.createTask(task);
                     responseCode = 201;
                     break;
                 case "DELETE":
                     if (requestURI.getQuery() == null) {
-                        fileBackedTaskManager.deleteAllTasks();
+                        taskManager.deleteAllTasks();
                         responseCode = 200;
                     } else if (requestURI.getQuery().startsWith("id=")) {
                         int id = Integer.parseInt(requestURI.getQuery().substring(3));
-                        fileBackedTaskManager.deleteTaskById(id);
+                        taskManager.deleteTaskById(id);
                         responseCode = 200;
                     } else {
                         responseCode = 400;
@@ -106,16 +106,16 @@ public class HttpTaskServer {
                 case "GET":
                     if (requestURI.getQuery()  == null ) {
                         //GET /tasks/subtask/
-                        response = gson.toJson(fileBackedTaskManager.getSubTasks());
+                        response = gson.toJson(taskManager.getSubTasks());
                         responseCode = 200;
                     } else if (requestURI.getQuery().startsWith("id=")) {
                         //GET /tasks/subtask/?id=
                         int id = Integer.parseInt(requestURI.getQuery().substring(3));
-                        if (fileBackedTaskManager.getSubTaskById(id) == null) {
+                        if (taskManager.getSubTaskById(id) == null) {
                             responseCode = 404;
                         } else {
                             responseCode = 200;
-                            response = gson.toJson(fileBackedTaskManager.getSubTaskById(id));
+                            response = gson.toJson(taskManager.getSubTaskById(id));
                         }
                     } else {
                         responseCode = 400;
@@ -125,16 +125,16 @@ public class HttpTaskServer {
                     InputStream inputStream = httpExchange.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
                     SubTask subTask = gson.fromJson(body, SubTask.class);
-                    fileBackedTaskManager.createSubTask(subTask);
+                    taskManager.createSubTask(subTask);
                     responseCode = 201;
                     break;
                 case "DELETE":
                     if (requestURI.getQuery() == null) {
-                        fileBackedTaskManager.deleteAllSubTasks();
+                        taskManager.deleteAllSubTasks();
                         responseCode = 200;
                     } else if (requestURI.getQuery().startsWith("id=")) {
                         int id = Integer.parseInt(requestURI.getQuery().substring(3));
-                        fileBackedTaskManager.deleteSubTaskById(id);
+                        taskManager.deleteSubTaskById(id);
                         responseCode = 200;
                     } else {
                         responseCode = 400;
@@ -165,16 +165,16 @@ public class HttpTaskServer {
                 case "GET":
                     if (requestURI.getQuery()  == null ) {
                         //GET /tasks/epic/
-                        response = gson.toJson(fileBackedTaskManager.getEpics());
+                        response = gson.toJson(taskManager.getEpics());
                         responseCode = 200;
                     } else if (requestURI.getQuery().startsWith("id=")) {
                         //GET /tasks/epic/?id=
                         int id = Integer.parseInt(requestURI.getQuery().substring(3));
-                        if (fileBackedTaskManager.getEpicById(id) == null) {
+                        if (taskManager.getEpicById(id) == null) {
                             responseCode = 404;
                         } else {
                             responseCode = 200;
-                            response = gson.toJson(fileBackedTaskManager.getEpicById(id));
+                            response = gson.toJson(taskManager.getEpicById(id));
                         }
                     } else {
                         responseCode = 400;
@@ -184,16 +184,16 @@ public class HttpTaskServer {
                     InputStream inputStream = httpExchange.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
                     Epic epic = gson.fromJson(body, Epic.class);
-                    fileBackedTaskManager.createEpic(epic);
+                    taskManager.createEpic(epic);
                     responseCode = 201;
                     break;
                 case "DELETE":
                     if (requestURI.getQuery() == null) {
-                        fileBackedTaskManager.deleteAllEpics();
+                        taskManager.deleteAllEpics();
                         responseCode = 200;
                     } else if (requestURI.getQuery().startsWith("id=")) {
                         int id = Integer.parseInt(requestURI.getQuery().substring(3));
-                        fileBackedTaskManager.deleteEpicById(id);
+                        taskManager.deleteEpicById(id);
                         responseCode = 200;
                     } else {
                         responseCode = 400;
@@ -219,15 +219,12 @@ public class HttpTaskServer {
             int responseCode;
             String response;
 
-            switch (method) {
-                case "GET":
-                    //GET /tasks/history
-                    responseCode = 200;
-                    response = gson.toJson(fileBackedTaskManager.history());
-                    break;
-                default:
-                    response = "Unsupported method";
-                    responseCode = 400;
+            if ("GET".equals(method)) {//GET /tasks/history
+                responseCode = 200;
+                response = gson.toJson(taskManager.history());
+            } else {
+                response = "Unsupported method";
+                responseCode = 400;
             }
 
             httpExchange.sendResponseHeaders(responseCode, 0);
@@ -245,15 +242,12 @@ public class HttpTaskServer {
             int responseCode;
             String response;
 
-            switch (method) {
-                case "GET":
-                    //GET /tasks
-                    responseCode = 200;
-                    response = gson.toJson(fileBackedTaskManager.getPrioritizedTasks());
-                    break;
-                default:
-                    response = "Unsupported method";
-                    responseCode = 400;
+            if ("GET".equals(method)) {//GET /tasks
+                responseCode = 200;
+                response = gson.toJson(taskManager.getPrioritizedTasks());
+            } else {
+                response = "Unsupported method";
+                responseCode = 400;
             }
 
             httpExchange.sendResponseHeaders(responseCode, 0);

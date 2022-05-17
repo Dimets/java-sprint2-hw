@@ -4,6 +4,7 @@ import history.HistoryManager;
 import history.InMemoryHistoryManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -11,6 +12,10 @@ public class Managers {
 
     public static TaskManager getDefault() {
         return new InMemoryTaskManager(getDefaultHistory());
+    }
+
+    public static TaskManager getHttpManager() {
+        return new HTTPTaskManager("http://localhost:8078");
     }
 
     public static TaskManager getFileManager() {

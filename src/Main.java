@@ -14,19 +14,17 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        KVServer kvServer = new KVServer();
-        kvServer.start();
+       // KVServer kvServer = new KVServer();
+       // kvServer.start();
 
         //TaskManager taskManager = Managers.getDefault();
         //TaskManager taskManager = Managers.getFileManager();
         //TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
 
-        //HttpTaskServer httpTaskServer = new HttpTaskServer(FileBackedTasksManager.loadFromFile(
-          //     new File("DbTaskManager.csv")));
+        TaskManager taskManager = HTTPTaskManager.load();
 
+/*
         TaskManager taskManager = Managers.getHttpManager();
-
-        HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
 
         Task task1 = new Task("Первая задача", "Описание первой задачи",
                 taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now().minusDays(2),Duration.ofDays(10));
@@ -89,7 +87,7 @@ public class Main {
                 task.getId(), TaskStatus.IN_PROGRESS, LocalDateTime.now().plusDays(20), Duration.ofHours(8));
 
         taskManager.updateTask(updatedTask);
-
+*/
         System.out.println("tasks:");
         System.out.println(taskManager.getTasks());
         System.out.println("epics:");

@@ -5,8 +5,8 @@ import model.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private Map<Integer,Node<Task>> historyMap = new HashMap<>();
-    private TaskLinkedList<Task> taskTaskLinkedList = new TaskLinkedList<>();
+    private final Map<Integer,Node<Task>> historyMap = new HashMap<>();
+    private final TaskLinkedList<Task> taskTaskLinkedList = new TaskLinkedList<>();
 
    private class TaskLinkedList<T> {
         private Node<T> headNode;
@@ -73,8 +73,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyMap.remove(id);
         }
         historyMap.put(id, taskTaskLinkedList.linkLast(task));
-
-
     }
 
     @Override

@@ -52,25 +52,33 @@ public class KVTaskClient {
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpResponse.BodyHandler<String> bodyHandler = HttpResponse.BodyHandlers.ofString();
             HttpResponse<String> httpResponse = httpClient.send(httpRequest, bodyHandler);
-            System.out.println(httpResponse);
         } catch (InterruptedException | IOException e) {
             System.out.println("Во время выполнения запроса возникла ошибка." +
                     " Проверьте, пожалуйста, URL-адрес и повторите попытку");
         }
     }
 
-    public String load(String key) throws IOException, InterruptedException {
+    public String load(String key) {
         //GET /load/<key>?API_TOKEN=
-        URI uri = URI.create(url + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
-        HttpRequest httpRequest = requestBuilder
-                .GET()
-                .uri(uri)
-                .build();
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpResponse.BodyHandler<String> bodyHandler = HttpResponse.BodyHandlers.ofString();
-        HttpResponse<String> httpResponse = httpClient.send(httpRequest, bodyHandler);
+        String response = null;
 
-        return httpResponse.body();
+        try {
+            URI uri = URI.create(url + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
+            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
+            HttpRequest httpRequest = requestBuilder
+                    .GET()
+                    .uri(uri)
+                    .build();
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpResponse.BodyHandler<String> bodyHandler = HttpResponse.BodyHandlers.ofString();
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, bodyHandler);
+
+            response = httpResponse.body();
+        } catch (InterruptedException | IOException e) {
+            System.out.println("Во время выполнения запроса возникла ошибка." +
+                    " Проверьте, пожалуйста, URL-адрес и повторите попытку");
+        }
+
+        return response;
     }
 }

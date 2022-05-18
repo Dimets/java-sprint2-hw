@@ -1,4 +1,4 @@
-package taskengine;
+package utils;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import taskengine.TaskManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,22 +18,26 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class HttpTaskServer {
-    private final HttpServer httpServer;
+    private static HttpServer httpServer;
     private static TaskManager taskManager;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     private static final Gson gson = new Gson();
 
-    public HttpTaskServer(TaskManager taskManager) throws IOException {
-        this.httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
-        this.taskManager = taskManager;
+    public HttpTaskServer(TaskManager taskManager) {
+        try {
+            this.httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
+            this.taskManager = taskManager;
 
-        httpServer.createContext("/tasks/task", new TaskHandler());
-        httpServer.createContext("/tasks/subtask", new SubTaskHandler());
-        httpServer.createContext("/tasks/epic", new EpicHandler());
-        httpServer.createContext("/tasks/history", new HistoryHandler());
-        httpServer.createContext("/tasks/", new PrioritizedTaskHandler());
-        httpServer.start();
+            httpServer.createContext("/tasks/task", new TaskHandler());
+            httpServer.createContext("/tasks/subtask", new SubTaskHandler());
+            httpServer.createContext("/tasks/epic", new EpicHandler());
+            httpServer.createContext("/tasks/history", new HistoryHandler());
+            httpServer.createContext("/tasks/", new PrioritizedTaskHandler());
+            httpServer.start();
+        } catch (IOException e) {
+            System.out.println("Не удалось запустить сервер");
+        }
     }
 
     static class TaskHandler implements HttpHandler {

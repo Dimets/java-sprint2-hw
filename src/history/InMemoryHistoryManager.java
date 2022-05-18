@@ -90,7 +90,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public static String toString(HistoryManager historyManager) {
        StringBuilder historyManagerString =  new StringBuilder();
-       int task;
 
        for (int i = 0; i < historyManager.getHistory().size(); i++) {
            if (i != (historyManager.getHistory().size() - 1)) {

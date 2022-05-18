@@ -6,11 +6,12 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 import model.TaskStatus;
+import utils.KVTaskClient;
+import utils.Managers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
     private final KVTaskClient kvTaskClient;
@@ -34,72 +35,82 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("priority", gson.toJson(super.getPrioritizedTasks()));
     }
     public static TaskManager load() {
-        HTTPTaskManager httpTaskManager = (HTTPTaskManager) Managers.getHttpManager();
+        HTTPTaskManager httpTaskManager = (HTTPTaskManager) Managers.getHttpTaskManager();
         KVTaskClient kvTaskClient = httpTaskManager.getKvTaskClient();
         LocalDateTime startTime;
         Duration duration;
 
-        JsonElement tasksJsonElement = JsonParser.parseString(kvTaskClient.load("tasks"));
-        JsonElement subTasksJsonElement = JsonParser.parseString(kvTaskClient.load("subtasks"));
-        JsonElement epicsJsonElement = JsonParser.parseString(kvTaskClient.load("epics"));
-        JsonElement historyJsonElement = JsonParser.parseString(kvTaskClient.load("history"));
 
-        for (Object taskElement : gson.fromJson(tasksJsonElement, HashMap.class).values()) {
-            startTime = null;
-            duration = null;
+        if (kvTaskClient.load("tasks") != null) {
+            JsonElement tasksJsonElement = JsonParser.parseString(kvTaskClient.load("tasks"));
 
-            JsonObject jsonObject = JsonParser.parseString(gson.toJson(taskElement)).getAsJsonObject();
+            for (Object taskElement : gson.fromJson(tasksJsonElement, HashMap.class).values()) {
+                startTime = null;
+                duration = null;
 
-            if (jsonObject.has("startTime")) {
-                startTime = gson.fromJson(jsonObject.get("startTime"), LocalDateTime.class);
+                JsonObject jsonObject = JsonParser.parseString(gson.toJson(taskElement)).getAsJsonObject();
+
+                if (jsonObject.has("startTime")) {
+                    startTime = gson.fromJson(jsonObject.get("startTime"), LocalDateTime.class);
+                }
+
+                if (jsonObject.has("duration")) {
+                    duration = gson.fromJson(jsonObject.get("duration"), Duration.class);
+                }
+
+                httpTaskManager.createTask(new Task(jsonObject.get("name").getAsString(),
+                        jsonObject.get("description").getAsString(), jsonObject.get("id").getAsInt(),
+                        TaskStatus.valueOf(jsonObject.get("status").getAsString()),startTime,duration));
             }
-
-            if (jsonObject.has("duration")) {
-                duration = gson.fromJson(jsonObject.get("duration"), Duration.class);
-            }
-
-            httpTaskManager.createTask(new Task(jsonObject.get("name").getAsString(),
-                    jsonObject.get("description").getAsString(), jsonObject.get("id").getAsInt(),
-                    TaskStatus.valueOf(jsonObject.get("status").getAsString()),startTime,duration));
         }
 
-        for (Object epicElement : gson.fromJson(epicsJsonElement, HashMap.class).values()) {
+        if (kvTaskClient.load("subtasks") != null) {
+            JsonElement subTasksJsonElement = JsonParser.parseString(kvTaskClient.load("subtasks"));
+            for (Object subTaskElement : gson.fromJson(subTasksJsonElement, HashMap.class).values()) {
+                startTime = null;
+                duration = null;
 
-            JsonObject jsonObject = JsonParser.parseString(gson.toJson(epicElement)).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseString(gson.toJson(subTaskElement)).getAsJsonObject();
 
-            httpTaskManager.createEpic(new Epic(jsonObject.get("name").getAsString(),
-                    jsonObject.get("description").getAsString(), jsonObject.get("id").getAsInt(),
-                    TaskStatus.valueOf(jsonObject.get("status").getAsString())));
+                if (jsonObject.has("startTime")) {
+                    startTime = gson.fromJson(jsonObject.get("startTime"), LocalDateTime.class);
+                }
+
+                if (jsonObject.has("duration")) {
+                    duration = gson.fromJson(jsonObject.get("duration"), Duration.class);
+                }
+
+                httpTaskManager.createSubTask(new SubTask(jsonObject.get("name").getAsString(),
+                        jsonObject.get("description").getAsString(), jsonObject.get("id").getAsInt(),
+                        TaskStatus.valueOf(jsonObject.get("status").getAsString()),jsonObject.get("epicId").getAsInt(),
+                        startTime, duration));
+            }
         }
 
-        for (Object subTaskElement : gson.fromJson(subTasksJsonElement, HashMap.class).values()) {
-            startTime = null;
-            duration = null;
+        if (kvTaskClient.load("epics") != null) {
+            JsonElement epicsJsonElement = JsonParser.parseString(kvTaskClient.load("epics"));
+            for (Object epicElement : gson.fromJson(epicsJsonElement, HashMap.class).values()) {
 
-            JsonObject jsonObject = JsonParser.parseString(gson.toJson(subTaskElement)).getAsJsonObject();
+                JsonObject jsonObject = JsonParser.parseString(gson.toJson(epicElement)).getAsJsonObject();
 
-            if (jsonObject.has("startTime")) {
-                startTime = gson.fromJson(jsonObject.get("startTime"), LocalDateTime.class);
+                httpTaskManager.createEpic(new Epic(jsonObject.get("name").getAsString(),
+                        jsonObject.get("description").getAsString(), jsonObject.get("id").getAsInt(),
+                        TaskStatus.valueOf(jsonObject.get("status").getAsString())));
             }
-
-            if (jsonObject.has("duration")) {
-                duration = gson.fromJson(jsonObject.get("duration"), Duration.class);
-            }
-
-            httpTaskManager.createSubTask(new SubTask(jsonObject.get("name").getAsString(),
-                    jsonObject.get("description").getAsString(), jsonObject.get("id").getAsInt(),
-                    TaskStatus.valueOf(jsonObject.get("status").getAsString()),jsonObject.get("epicId").getAsInt(),
-                    startTime, duration));
         }
 
-        String[] idInHistory = historyJsonElement.getAsString().split(",");
-        for (String id : idInHistory) {
-            if (httpTaskManager.getTasks().containsKey(Integer.parseInt(id))) {
-                httpTaskManager.getTaskById(Integer.parseInt(id));
-            } else if (httpTaskManager.getEpics().containsKey(Integer.parseInt(id))) {
-                httpTaskManager.getEpicById(Integer.parseInt(id));
-            } else {
-                httpTaskManager.getSubTaskById(Integer.parseInt(id));
+        if (kvTaskClient.load("history").length() == 0) {
+            JsonElement historyJsonElement = JsonParser.parseString(kvTaskClient.load("history"));
+
+            String[] idInHistory = historyJsonElement.getAsString().split(",");
+            for (String id : idInHistory) {
+                if (httpTaskManager.getTasks().containsKey(Integer.parseInt(id))) {
+                    httpTaskManager.getTaskById(Integer.parseInt(id));
+                } else if (httpTaskManager.getEpics().containsKey(Integer.parseInt(id))) {
+                    httpTaskManager.getEpicById(Integer.parseInt(id));
+                } else {
+                    httpTaskManager.getSubTaskById(Integer.parseInt(id));
+                }
             }
         }
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import taskengine.*;
+import utils.Managers;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,7 +23,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @BeforeEach
     public void setUp() {
-        taskManager = (FileBackedTasksManager) Managers.getFileManager("tests.csv");
+        taskManager = (FileBackedTasksManager) Managers.getFileBackedTasksManager("tests.csv");
     }
 
     @Test
@@ -33,7 +34,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
                 taskManager.getTaskId(), TaskStatus.NEW, defaultStartTime.minusDays(2), Duration.ofDays(10));
         taskManager.createTask(task1);
 
-        Epic epic1 = new Epic ("Первый эпик", "Описание первого эпика",
+        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика",
                 taskManager.getTaskId(), TaskStatus.NEW);
         taskManager.createEpic(epic1);
 
@@ -59,26 +60,16 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
             Assertions.assertEquals("1,TASK,Первая задача,NEW,Описание первой задачи,," +
                     defaultStartTime.minusDays(2) + ",PT240H,", fileLines[1], "Задача записана в файл некорректно");
             Assertions.assertEquals("2,EPIC,Первый эпик,IN_PROGRESS,Описание первого эпика,," +
-                    subTask2.getStartTime() + ",PT24H,", fileLines[2],
+                            subTask2.getStartTime() + ",PT24H,", fileLines[2],
                     "Эпик записан в файл некорректно");
             Assertions.assertEquals("4,SUBTASK,Вторая подзадача,IN_PROGRESS,Описание второй подзадачи,2," +
-                     subTask2.getStartTime() + ",PT24H,", fileLines[3]);
+                    subTask2.getStartTime() + ",PT24H,", fileLines[3]);
             Assertions.assertEquals("", fileLines[4]);
             Assertions.assertEquals("2,1,4", fileLines[5]);
 
         } catch (IOException e) {
             throw new ManagerReadException("Error to read file");
         }
-
-
-        /*
-
-
-        System.out.println(taskManager.getTasks());
-        System.out.println(referenceTaskManager.getTasks());
-        Assertions.assertEquals(referenceTaskManager.getTasks(),taskManager.getTasks());
-        //Assertions.assertEquals(referenceTaskManager, taskManager, "Сохранение и загрузка из файла некорректны"); */
-
 
     }
 

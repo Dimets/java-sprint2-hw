@@ -7,7 +7,7 @@ import model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import taskengine.InMemoryTaskManager;
-import taskengine.Managers;
+import utils.Managers;
 import taskengine.TaskManager;
 
 import java.time.Duration;
@@ -18,7 +18,7 @@ public class SubTaskTest {
 
     @BeforeEach
     public void setUp() {
-        taskManager = (InMemoryTaskManager) Managers.getDefault();
+        taskManager = Managers.getDefault();
     }
 
     @Test

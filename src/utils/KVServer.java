@@ -1,4 +1,4 @@
-package taskengine;
+package utils;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -108,6 +108,11 @@ public class KVServer {
         System.out.println("Открой в браузере http://localhost:" + PORT + "/");
         System.out.println("API_TOKEN: " + API_TOKEN);
         server.start();
+    }
+
+    public void stop() {
+        System.out.println("Останавливаем сервер на порту " + PORT);
+        server.stop(0);
     }
 
     private String generateApiKey() {

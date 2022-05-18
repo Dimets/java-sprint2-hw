@@ -5,6 +5,7 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 import history.InMemoryHistoryManager;
+import utils.Managers;
 
 import java.io.File;
 import java.io.FileReader;
@@ -61,7 +62,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static TaskManager loadFromFile(File file) {
-        TaskManager fileBackedTasksManager = Managers.getFileManager();
+        TaskManager fileBackedTasksManager = Managers.getFileBackedTasksManager();
 
         try (FileReader reader = new FileReader(file,StandardCharsets.UTF_8)) {
             String fileData = Files.readString(Path.of(file.getPath()), StandardCharsets.UTF_8);

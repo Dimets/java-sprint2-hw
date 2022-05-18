@@ -1,27 +1,29 @@
-import history.HistoryManager;
 import model.Epic;
 import model.SubTask;
 import model.Task;
 import model.TaskStatus;
-import taskengine.FileBackedTasksManager;
-import taskengine.Managers;
+import taskengine.HTTPTaskManager;
+import utils.KVServer;
 import taskengine.TaskManager;
+import utils.Managers;
 
-import java.io.File;
-import java.nio.charset.Charset;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+       //KVServer kvServer = new KVServer();
+       //kvServer.start();
 
         //TaskManager taskManager = Managers.getDefault();
         //TaskManager taskManager = Managers.getFileManager();
-        TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
+        //TaskManager taskManager = FileBackedTasksManager.loadFromFile(new File("DbTaskManager.csv"));
 
+        TaskManager taskManager = HTTPTaskManager.load();
 
-
+/*
+        TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Первая задача", "Описание первой задачи",
                 taskManager.getTaskId(), TaskStatus.NEW, LocalDateTime.now().minusDays(2),Duration.ofDays(10));
@@ -54,6 +56,7 @@ public class Main {
 
 
         taskManager.createTask(task1);
+        /*
         taskManager.createTask(task2);
         taskManager.createTask(task3);
         taskManager.createEpic(epic1);
@@ -84,7 +87,8 @@ public class Main {
                 task.getId(), TaskStatus.IN_PROGRESS, LocalDateTime.now().plusDays(20), Duration.ofHours(8));
 
         taskManager.updateTask(updatedTask);
-
+*/
+        taskManager.getTaskById(1);
         System.out.println("tasks:");
         System.out.println(taskManager.getTasks());
         System.out.println("epics:");

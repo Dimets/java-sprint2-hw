@@ -4,17 +4,18 @@ import history.HistoryManager;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import test.ManualChangeEpicStatusException;
 
 import java.util.*;
 
 /*Класс для управления задачами*/
 public class InMemoryTaskManager implements TaskManager {
     private int taskId = 0;
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, SubTask> subTasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
-    private HistoryManager historyManager;
-    private TreeSet<Task> prioritizedTasks = new TreeSet<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final HistoryManager historyManager;
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>();
 
 
 
@@ -46,11 +47,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTasks() {
+        for (int id : tasks.keySet()) {
+            historyManager.remove(id);
+        }
         tasks.clear();
     }
 
     @Override
     public void deleteAllEpics() {
+        for (int id : epics.keySet()) {
+            historyManager.remove(id);
+        }
         epics.clear();
     }
 
@@ -181,13 +188,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTaskById(int taskId) {
-        //prioritizedTasks.remove(tasks.get(taskId));
+        prioritizedTasks.remove(tasks.get(taskId));
         tasks.remove(taskId);
         historyManager.remove(taskId);
     }
 
     @Override
     public void deleteEpicById(int epicId) {
+        prioritizedTasks.remove(epics.get(epicId));
         epics.remove(taskId);
         historyManager.remove(epicId);
     }
@@ -197,7 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
         SubTask subTask = getSubTaskById(subTaskId);
         Epic epic = getEpicById(subTask.getEpicId());
 
-        //prioritizedTasks.remove(subTask);
+        prioritizedTasks.remove(subTask);
         subTasks.remove(subTaskId);
         epic.deleteSubTaskById(subTaskId);
         historyManager.remove(subTaskId);
@@ -234,9 +242,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else if (higherTask == null) {
                 if (floorTask.getEndTime() == null) {
                     return true;
-                } else if (task.getStartTime().isAfter(floorTask.getEndTime())) {
-                    return true;
-                } else {return false;}
+                } else return task.getStartTime().isAfter(floorTask.getEndTime());
             }
 
             if (floorTask.getEndTime() != null && higherTask.getStartTime() != null) {

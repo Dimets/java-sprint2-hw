@@ -7,17 +7,17 @@ import java.time.LocalDateTime;
 public class SubTask extends Task {
     private int epicId;
 
-    private final TaskType taskType = TaskType.SUBTASK;
-
     public SubTask(String name, String description, int id, TaskStatus status, int epicId) {
         super(name, description, id, status, null, null);
         this.epicId = epicId;
+        this.taskType = TaskType.SUBTASK;
     }
 
     public SubTask(String name, String description, int id, TaskStatus status, int epicId,
                    LocalDateTime startTime, Duration duration) {
         super(name, description, id, status, startTime, duration);
         this.epicId = epicId;
+        this.taskType = TaskType.SUBTASK;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%d,%s,%s", getId(), getTaskType(), getName(),
+        return String.format("%d,%s,%s,%s,%s,%d,%s,%s,", getId(), getTaskType(), getName(),
                 getStatus(), getDescription(),getEpicId(),getStartTime(),getDuration());
     }
 

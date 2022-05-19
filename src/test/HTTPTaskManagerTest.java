@@ -30,38 +30,32 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
     private Gson gson;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws IOException, InterruptedException {
         gson = new Gson();
         kvServer = new KVServer();
         kvServer.start();
         taskManager = (HTTPTaskManager) Managers.getDefault();
 
-        // создаём экземпляр URI, содержащий адрес нужного ресурса
+        URI uri = URI.create("http://localhost:8078/register");
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
+        HttpRequest httpRequest = requestBuilder
+                .GET()
+                .uri(uri)
+                .build();
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpResponse.BodyHandler<String> bodyHandler = HttpResponse.BodyHandlers.ofString();
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, bodyHandler);
 
-        try {
-            URI uri = URI.create("http://localhost:8078/register");
-            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
-            HttpRequest httpRequest = requestBuilder
-                    .GET()
-                    .uri(uri)
-                    .build();
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpResponse.BodyHandler<String> bodyHandler = HttpResponse.BodyHandlers.ofString();
-            HttpResponse<String> httpResponse = httpClient.send(httpRequest, bodyHandler);
-
-            if (httpResponse.statusCode() == 200) {
-                API_TOKEN = httpResponse.body();
-            } else {
-                System.out.println("Что-то пошло не так...");
-                System.out.println(httpResponse);
-                System.out.println(httpResponse.body());
-            }
-
-            System.out.println("Test HttpClient has registered with API_TOKEN = " + API_TOKEN);
-        } catch  (InterruptedException | IOException e) {
-            System.out.println("Во время выполнения запроса возникла ошибка." +
-                    " Проверьте, пожалуйста, URL-адрес и повторите попытку");
+        if (httpResponse.statusCode() == 200) {
+            API_TOKEN = httpResponse.body();
+        } else {
+            System.out.println("Что-то пошло не так...");
+            System.out.println(httpResponse);
+            System.out.println(httpResponse.body());
         }
+
+        System.out.println("Test HttpClient has registered with API_TOKEN = " + API_TOKEN);
+
 
     }
 
@@ -73,7 +67,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
     @Test
     void shouldSave() throws IOException, InterruptedException {
 
-        taskManager.createTask(new Task("Task First Name","Task First Description",111, TaskStatus.NEW, LocalDateTime.now(), Duration.ofDays(1)));
+        taskManager.createTask(new Task("Task First Name", "Task First Description", 111, TaskStatus.NEW, LocalDateTime.now(), Duration.ofDays(1)));
         //taskManager.createTask(new Task("Task Second Name","Task Second Description",222, TaskStatus.NEW, LocalDateTime.now().plusDays(5), Duration.ofDays(1)));
 
         URI uri = URI.create("http://localhost:8078/load/tasks?API_TOKEN=" + API_TOKEN);
@@ -98,7 +92,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
 
         JsonElement jsonElement = JsonParser.parseString(response.body()).getAsJsonObject().get("111");
 
-        Assertions.assertEquals(taskString,gson.toJson(jsonElement),"Сохраненное значение неверно");
+        Assertions.assertEquals(taskString, gson.toJson(jsonElement), "Сохраненное значение неверно");
 
     }
 
@@ -107,10 +101,10 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI uri = URI.create("http://localhost:8078/save/tasks?API_TOKEN=" + API_TOKEN);
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
         Task task = new Task("Task Name",
-                "Task Description",111, TaskStatus.NEW, LocalDateTime.now(),
+                "Task Description", 111, TaskStatus.NEW, LocalDateTime.now(),
                 Duration.ofDays(1));
         Map<Integer, Task> tasksMap = new HashMap<>();
-        tasksMap.put(111,task);
+        tasksMap.put(111, task);
         HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(gson.toJson(tasksMap));
         HttpRequest httpRequest = requestBuilder
                 .POST(bodyPublisher)

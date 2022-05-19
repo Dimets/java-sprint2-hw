@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import taskengine.ManagerReadException;
 import taskengine.TaskManager;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class HttpTaskServer {
             httpServer.createContext("/tasks/", new PrioritizedTaskHandler());
             httpServer.start();
         } catch (IOException e) {
-            System.out.println("Не удалось запустить сервер");
+            throw new HttpTaskServerRunException("Не удалось запустить сервер");
         }
     }
 
